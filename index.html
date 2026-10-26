@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>지구살리기 프로젝트 - 본전옷장 (ClothCycle)</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Pretendard', 'sans-serif'],
+                    },
+                    colors: {
+                        eco: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            200: '#bbf7d0',
+                            300: '#86efac',
+                            400: '#4ade80',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            800: '#166534',
+                            900: '#14532d',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Pretendard', sans-serif; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col antialiased">
+
+    <!-- HEADER / NAVIGATION -->
+    <header class="bg-white/80 backdrop-blur-md sticky top-0 z-40 border-b border-slate-200">
+        <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="bg-gradient-to-tr from-eco-600 to-emerald-400 text-white p-2.5 rounded-2xl shadow-md shadow-eco-200">
+                    <i class="fa-solid fa-shirt text-lg"></i>
+                </div>
+                <div>
+                    <div class="flex items-center space-x-2">
+                        <h1 class="text-lg font-bold text-slate-900 tracking-tight">본전옷장</h1>
+                        <span class="bg-eco-100 text-eco-800 text-[10px] font-bold px-2 py-0.5 rounded-full border border-eco-200">고교 1학년 지구살리기</span>
+                    </div>
+                    <p class="text-xs text-slate-500">패스트패션 문제 해결 & #30Wears 착용 기록기</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center space-x-2">
+                <button onclick="openProjectModal()" class="text-xs text-slate-600 hover:text-eco-700 bg-slate-100 hover:bg-eco-50 px-3 py-2 rounded-xl transition flex items-center space-x-1.5 font-medium border border-slate-200">
+                    <i class="fa-solid fa-circle-info text-eco-600"></i>
+                    <span class="hidden sm:inline">프로젝트 안내</span>
+                </button>
+                <button onclick="openAddModal()" class="bg-eco-600 hover:bg-eco-700 text-white text-xs font-semibold px-3.5 py-2 rounded-xl transition shadow-sm hover:shadow flex items-center space-x-1.5">
+                    <i class="fa-solid fa-plus"></i>
+                    <span>새 옷 등록</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTAINER -->
+    <main class="max-w-5xl mx-auto px-4 py-6 flex-grow w-full space-y-6">
+
+        <!-- HERO CAMPAIGN BANNER -->
+        <section class="bg-gradient-to-r from-eco-800 via-eco-700 to-emerald-800 rounded-3xl p-5 md:p-6 text-white shadow-lg relative overflow-hidden">
+            <div class="absolute -right-8 -bottom-8 opacity-10 pointer-events-none text-white">
+                <i class="fa-solid fa-leaf text-9xl"></i>
+            </div>
+            <div class="relative z-10 space-y-2">
+                <div class="inline-flex items-center space-x-2 bg-white/20 backdrop-blur-md px-3 py-1 rounded-full text-xs font-semibold text-eco-100">
+                    <i class="fa-solid fa-earth-americas text-emerald-300"></i>
+                    <span>패스트 패션(Fast Fashion) 문제 해결 행동 프로젝트</span>
+                </div>
+                <h2 class="text-xl md:text-2xl font-bold">한 벌의 옷을 더 오래, 본전 뽑을 때까지!</h2>
+                <p class="text-xs md:text-sm text-eco-100 max-w-2xl leading-relaxed">
+                    의류 1벌 생산 시 평균 <strong class="text-yellow-300">2,700L의 물</strong>이 소요되고 탄소가 배출됩니다. 
+                    구매일 기준 최소 착용 기간과 목표 착용 횟수(<strong class="text-emerald-300">#30Wears 운동</strong>)를 채워 탄소 발자국을 직접 줄여보세요!
+                </p>
+            </div>
+        </section>
+
+        <!-- DASHBOARD STATS CARDS -->
+        <section class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+            <!-- Total Clothes -->
+            <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col justify-between">
+                <div class="flex justify-between items-center text-slate-400 mb-2">
+                    <span class="text-xs font-medium">등록한 옷</span>
+                    <i class="fa-solid fa-boxes-packing text-slate-400"></i>
+                </div>
+                <div>
+                    <span id="stat-total-items" class="text-2xl font-extrabold text-slate-800">0</span>
+                    <span class="text-xs text-slate-500 font-normal">벌</span>
+                </div>
+            </div>
+
+            <!-- Avg CPW -->
+            <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col justify-between">
+                <div class="flex justify-between items-center text-slate-400 mb-2">
+                    <span class="text-xs font-medium">평균 착용 단가(CPW)</span>
+                    <i class="fa-solid fa-coins text-amber-500"></i>
+                </div>
+                <div>
+                    <span id="stat-avg-cpw" class="text-2xl font-extrabold text-slate-800">0</span>
+                    <span class="text-xs text-slate-500 font-normal">원/회</span>
+                </div>
+            </div>
+
+            <!-- Saved Water -->
+            <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col justify-between">
+                <div class="flex justify-between items-center text-slate-400 mb-2">
+                    <span class="text-xs font-medium">절감한 물 발자국</span>
+                    <i class="fa-solid fa-droplet text-sky-500"></i>
+                </div>
+                <div>
+                    <span id="stat-saved-water" class="text-2xl font-extrabold text-sky-600">0</span>
+                    <span class="text-xs text-slate-500 font-normal">L</span>
+                </div>
+            </div>
+
+            <!-- Reduced CO2 -->
+            <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col justify-between">
+                <div class="flex justify-between items-center text-slate-400 mb-2">
+                    <span class="text-xs font-medium">탄소 배출 감축량</span>
+                    <i class="fa-solid fa-cloud-sun text-emerald-500"></i>
+                </div>
+                <div>
+                    <span id="stat-saved-co2" class="text-2xl font-extrabold text-emerald-600">0</span>
+                    <span class="text-xs text-slate-500 font-normal">kg</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- CONTROLS & FILTER SECTION -->
+        <section class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm space-y-3">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                <!-- Filters -->
+                <div class="flex flex-wrap items-center gap-1.5" id="filter-container">
+                    <button onclick="setFilter('all')" data-filter="all" class="filter-btn bg-slate-800 text-white text-xs font-medium px-3 py-1.5 rounded-xl transition">전체</button>
+                    <button onclick="setFilter('spa')" data-filter="spa" class="filter-btn bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-medium px-3 py-1.5 rounded-xl transition">SPA 브랜드</button>
+                    <button onclick="setFilter('in-progress')" data-filter="in-progress" class="filter-btn bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-medium px-3 py-1.5 rounded-xl transition">목표 진행 중</button>
+                    <button onclick="setFilter('achieved')" data-filter="achieved" class="filter-btn bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-medium px-3 py-1.5 rounded-xl transition">목표 달성 (본전! 🟢)</button>
+                </div>
+
+                <!-- Sort -->
+                <div class="flex items-center space-x-2 w-full sm:w-auto justify-end">
+                    <span class="text-xs text-slate-400 whitespace-nowrap"><i class="fa-solid fa-arrow-down-wide-short mr-1"></i>정렬:</span>
+                    <select id="sort-select" onchange="renderApp()" class="bg-slate-50 border border-slate-200 text-xs rounded-xl px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-eco-500">
+                        <option value="recent">최근 구매순</option>
+                        <option value="oldest">오래된 구매순</option>
+                        <option value="cpw-high">1회당 단가 높은순 (경고)</option>
+                        <option value="cpw-low">1회당 단가 낮은순 (효자)</option>
+                        <option value="progress">목표 달성률순</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+
+        <!-- CLOTHING CARDS GRID -->
+        <section>
+            <div id="clothing-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <!-- Dynamic cards injected via JS -->
+            </div>
+
+            <!-- Empty State -->
+            <div id="empty-state" class="hidden bg-white rounded-3xl border border-dashed border-slate-300 p-12 text-center space-y-3">
+                <div class="bg-eco-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto text-eco-600 text-2xl">
+                    <i class="fa-solid fa-shirt"></i>
+                </div>
+                <h3 class="text-base font-bold text-slate-800">등록된 옷이 없습니다</h3>
+                <p class="text-xs text-slate-500 max-w-sm mx-auto">구매한 옷을 등록하고 최소 착용 기간 목표와 #30Wears 실천을 시작해 보세요!</p>
+                <button onclick="openAddModal()" class="bg-eco-600 hover:bg-eco-700 text-white text-xs font-semibold px-4 py-2 rounded-xl transition shadow-sm inline-flex items-center space-x-1.5">
+                    <i class="fa-solid fa-plus"></i>
+                    <span>첫 번째 옷 등록하기</span>
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-white border-t border-slate-200 mt-12 py-6 text-center text-xs text-slate-400">
+        <div class="max-w-5xl mx-auto px-4 space-y-1">
+            <p class="font-semibold text-slate-600">지구살리기 탐구 프로젝트 — 본전옷장 (ClothCycle)</p>
+            <p>고등학교 1학년 패스트패션 소비 패턴 개선 및 환경 지표 추적 서비스</p>
+        </div>
+    </footer>
+
+    <!-- MODAL 1: ADD / EDIT CLOTHING -->
+    <div id="modal-form" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl shadow-xl max-w-md w-full overflow-hidden border border-slate-100 animate-in fade-in zoom-in duration-200">
+            <div class="px-6 py-4 bg-slate-50 border-b border-slate-100 flex justify-between items-center">
+                <h3 id="modal-title" class="text-base font-bold text-slate-800">새 옷 등록하기</h3>
+                <button onclick="closeAddModal()" class="text-slate-400 hover:text-slate-600 transition">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            
+            <form id="clothing-form" onsubmit="saveClothing(event)" class="p-6 space-y-4">
+                <input type="hidden" id="input-id">
+
+                <!-- Item Name -->
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">의류명 / 특징 <span class="text-red-500">*</span></label>
+                    <input type="text" id="input-name" required placeholder="예: 자라 오버핏 데님 자켓" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-eco-500">
+                </div>
+
+                <!-- Category & Brand Type -->
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">카테고리</label>
+                        <select id="input-category" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-eco-500">
+                            <option value="상의">상의 (티셔츠/셔츠)</option>
+                            <option value="하의">하의 (바지/스커트)</option>
+                            <option value="아우터">아우터 (자켓/코트)</option>
+                            <option value="원피스">원피스/세트</option>
+                            <option value="잡화">신발/잡화</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">브랜드 구분</label>
+                        <select id="input-brand-type" onchange="updateTargetWearsRecommendation()" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-eco-500">
+                            <option value="spa">SPA 브랜드 (자라, H&M 등)</option>
+                            <option value="general">일반 브랜드</option>
+                            <option value="premium">프리미엄 / 아우터</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Purchase Date & Price -->
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">구매일자 <span class="text-red-500">*</span></label>
+                        <input type="date" id="input-date" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-eco-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">구매 가격(원) <span class="text-red-500">*</span></label>
+                        <input type="number" id="input-price" required min="0" step="500" placeholder="39000" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-eco-500">
+                    </div>
+                </div>
+
+                <!-- Target Wears -->
+                <div>
+                    <div class="flex justify-between items-center mb-1">
+                        <label class="text-xs font-semibold text-slate-700">목표 착용 횟수 (#30Wears)</label>
+                        <span id="target-recommendation-tag" class="text-[10px] text-eco-700 font-medium bg-eco-50 px-2 py-0.5 rounded-md">권장: 30회 (최소 6개월~1년)</span>
+                    </div>
+                    <input type="number" id="input-target-wears" required min="1" value="30" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-eco-500">
+                    <p class="text-[10px] text-slate-400 mt-1">* 구매일과 브랜드 유형을 바탕으로 최소 권장 착용 기한이 자동 계산됩니다.</p>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="pt-2 flex justify-end space-x-2">
+                    <button type="button" onclick="closeAddModal()" class="px-4 py-2 rounded-xl text-xs font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 transition">취소</button>
+                    <button type="submit" class="px-4 py-2 rounded-xl text-xs font-semibold text-white bg-eco-600 hover:bg-eco-700 transition shadow-sm">저장하기</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 2: PROJECT INFO & SDGS -->
+    <div id="modal-project" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl shadow-xl max-w-lg w-full overflow-hidden border border-slate-100 max-h-[90vh] flex flex-col">
+            <div class="px-6 py-4 bg-eco-800 text-white flex justify-between items-center">
+                <div class="flex items-center space-x-2">
+                    <i class="fa-solid fa-earth-asia text-emerald-300"></i>
+                    <h3 class="text-base font-bold">지구살리기 프로젝트 탐구 배경</h3>
+                </div>
+                <button onclick="closeProjectModal()" class="text-eco-200 hover:text-white transition">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            
+            <div class="p-6 space-y-4 overflow-y-auto custom-scrollbar text-xs text-slate-600 leading-relaxed">
+                <div class="bg-eco-50 border border-eco-200 p-3.5 rounded-2xl text-eco-900 space-y-1">
+                    <h4 class="font-bold text-sm text-eco-800">📌 탐구 주제</h4>
+                    <p>CPW(Cost Per Wear) 및 착용 목표 기간 추적을 통한 패스트패션 소비 습관 개선 및 탄소 발자국 감축 실천</p>
+                </div>
+
+                <div class="space-y-2">
+                    <h4 class="font-bold text-slate-800 text-sm">💡 왜 패스트 패션이 문제일까요?</h4>
+                    <ul class="list-disc pl-4 space-y-1 text-slate-600">
+                        <li><strong>수질 오염:</strong> 면 티셔츠 1벌을 만드는 데 성인 한 사람이 2.5년 동안 마실 수 있는 <strong>2,700L의 물</strong>이 소요됩니다.</li>
+                        <li><strong>탄소 배출:</strong> 의류 산업은 전 세계 탄소 배출량의 약 <strong>10%</strong>를 차지하며, 이는 모든 국제 항공편과 해운을 합친 것보다 많습니다.</li>
+                        <li><strong>짧은 수명:</strong> SPA 브랜드 의류의 30% 이상이 1년 이내에 매립되거나 소각됩니다.</li>
+                    </ul>
+                </div>
+
+                <div class="space-y-2">
+                    <h4 class="font-bold text-slate-800 text-sm">🌱 실천 솔루션: #30Wears 운동</h4>
+                    <p>
+                        영국의 친환경 운동가 방드 라르송(Livia Firth)이 제안한 운동으로, 
+                        <strong>"구매한 옷을 최소 30회 이상 입지 않을 거라면 처음부터 사지 말자"</strong>는 실천 운동입니다. 
+                        본 앱은 내가 산 옷의 구매일자와 착용 횟수를 기록하여 1회당 비용(CPW)을 낮추고 본전을 뽑도록 유도합니다.
+                    </p>
+                </div>
+
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 text-[11px] text-slate-500">
+                    <span class="font-bold text-slate-700">UN SDGs 연계 목표:</span> Goal 12. 지속가능한 생산과 소비 (Responsible Consumption and Production)
+                </div>
+            </div>
+
+            <div class="p-4 bg-slate-50 border-t border-slate-100 text-right">
+                <button onclick="closeProjectModal()" class="px-4 py-2 bg-slate-800 text-white rounded-xl text-xs font-semibold hover:bg-slate-700 transition">확인 및 닫기</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // Key Constants & Storage
+        const STORAGE_KEY = 'clothcycle_items_v1';
+
+        // Sample initial items for demo
+        const INITIAL_ITEMS = [
+            {
+                id: '1',
+                name: '자라 데님 자켓',
+                category: '아우터',
+                brandType: 'spa',
+                purchaseDate: '2026-02-10',
+                price: 59000,
+                targetWears: 30,
+                currentWears: 22,
+            },
+            {
+                id: '2',
+                name: '기본 라운드 반팔티',
+                category: '상의',
+                brandType: 'spa',
+                purchaseDate: '2026-03-01',
+                price: 19900,
+                targetWears: 30,
+                currentWears: 30,
+            },
+            {
+                id: '3',
+                name: '체크 플라넬 셔츠',
+                category: '상의',
+                brandType: 'general',
+                purchaseDate: '2025-11-15',
+                price: 39000,
+                targetWears: 35,
+                currentWears: 2,
+            }
+        ];
+
+        let clothingList = [];
+        let currentFilter = 'all';
+
+        // Initialize App
+        window.addEventListener('DOMContentLoaded', () => {
+            loadItems();
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('input-date').value = today;
+        });
+
+        // Load items from localStorage or seed initial
+        function loadItems() {
+            const stored = localStorage.getItem(STORAGE_KEY);
+            if (stored) {
+                try {
+                    clothingList = JSON.parse(stored);
+                } catch(e) {
+                    clothingList = INITIAL_ITEMS;
+                }
+            } else {
+                clothingList = INITIAL_ITEMS;
+                saveToStorage();
+            }
+            renderApp();
+        }
+
+        function saveToStorage() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(clothingList));
+        }
+
+        // Helper: Target Duration Calculation
+        function calculateTargetDuration(targetWears) {
+            if (targetWears <= 30) {
+                return '최소 6개월~1년';
+            } else if (targetWears <= 50) {
+                return '최소 1년~2년';
+            } else {
+                return '최소 2년 이상';
+            }
+        }
+
+        // Helper: Target Date String Calculation
+        function getTargetDateString(purchaseDateStr, brandType) {
+            if (!purchaseDateStr) return '-';
+            const purchase = new Date(purchaseDateStr);
+            let monthsToAdd = 6; 
+            if (brandType === 'general') monthsToAdd = 12;
+            if (brandType === 'premium') monthsToAdd = 24;
+
+            purchase.setMonth(purchase.getMonth() + monthsToAdd);
+            const yyyy = purchase.getFullYear();
+            const mm = String(purchase.getMonth() + 1).padStart(2, '0');
+            const dd = String(purchase.getDate()).padStart(2, '0');
+            return `${yyyy}.${mm}.${dd}까지`;
+        }
+
+        // Render Cards & Dashboard
+        function renderApp() {
+            updateDashboardStats();
+            renderGrid();
+        }
+
+        function updateDashboardStats() {
+            const totalItems = clothingList.length;
+            document.getElementById('stat-total-items').innerText = totalItems;
+
+            if (totalItems === 0) {
+                document.getElementById('stat-avg-cpw').innerText = '0';
+                document.getElementById('stat-saved-water').innerText = '0';
+                document.getElementById('stat-saved-co2').innerText = '0';
+                return;
+            }
+
+            // Avg CPW
+            const totalCpwSum = clothingList.reduce((acc, item) => {
+                const cpw = item.currentWears > 0 ? Math.round(item.price / item.currentWears) : item.price;
+                return acc + cpw;
+            }, 0);
+            const avgCpw = Math.round(totalCpwSum / totalItems);
+            document.getElementById('stat-avg-cpw').innerText = avgCpw.toLocaleString();
+
+            // Environmental Impact Saved (# of completed target items or total wears count)
+            const completedItems = clothingList.filter(item => item.currentWears >= item.targetWears).length;
+            const savedWater = completedItems * 2700; // 2,700L per saved garment
+            const savedCo2 = (completedItems * 3.5).toFixed(1); // approx 3.5kg CO2 per garment
+
+            document.getElementById('stat-saved-water').innerText = savedWater.toLocaleString();
+            document.getElementById('stat-saved-co2').innerText = savedCo2;
+        }
+
+        function renderGrid() {
+            const grid = document.getElementById('clothing-grid');
+            const emptyState = document.getElementById('empty-state');
+
+            // Apply Filter
+            let filtered = clothingList.filter(item => {
+                if (currentFilter === 'spa') return item.brandType === 'spa';
+                if (currentFilter === 'in-progress') return item.currentWears < item.targetWears;
+                if (currentFilter === 'achieved') return item.currentWears >= item.targetWears;
+                return true;
+            });
+
+            // Apply Sort
+            const sortVal = document.getElementById('sort-select').value;
+            filtered.sort((a, b) => {
+                const cpwA = a.currentWears > 0 ? a.price / a.currentWears : a.price;
+                const cpwB = b.currentWears > 0 ? b.price / b.currentWears : b.price;
+                const progA = (a.currentWears / a.targetWears);
+                const progB = (b.currentWears / b.targetWears);
+
+                if (sortVal === 'recent') return new Date(b.purchaseDate) - new Date(a.purchaseDate);
+                if (sortVal === 'oldest') return new Date(a.purchaseDate) - new Date(b.purchaseDate);
+                if (sortVal === 'cpw-high') return cpwB - cpwA;
+                if (sortVal === 'cpw-low') return cpwA - cpwB;
+                if (sortVal === 'progress') return progB - progA;
+                return 0;
+            });
+
+            if (filtered.length === 0) {
+                grid.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            } else {
+                emptyState.classList.add('hidden');
+            }
+
+            // Generate HTML Cards
+            grid.innerHTML = filtered.map(item => {
+                const cpw = item.currentWears > 0 ? Math.round(item.price / item.currentWears) : item.price;
+                const progressPercent = Math.min(100, Math.round((item.currentWears / item.targetWears) * 100));
+                const isAchieved = item.currentWears >= item.targetWears;
+
+                // Status Badge logic
+                let statusBadge = '';
+                if (isAchieved) {
+                    statusBadge = `<span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2.5 py-1 rounded-full border border-emerald-200"><i class="fa-solid fa-circle-check mr-1"></i>목표 달성! 🟢</span>`;
+                } else if (progressPercent >= 50) {
+                    statusBadge = `<span class="bg-amber-100 text-amber-800 text-[10px] font-bold px-2.5 py-1 rounded-full border border-amber-200"><i class="fa-solid fa-spinner mr-1"></i>본전 뽑는 중 🟡</span>`;
+                } else {
+                    statusBadge = `<span class="bg-slate-100 text-slate-600 text-[10px] font-medium px-2.5 py-1 rounded-full border border-slate-200"><i class="fa-solid fa-clock mr-1"></i>실천 필요 🔴</span>`;
+                }
+
+                // Brand Type Badge
+                const brandLabel = item.brandType === 'spa' ? 'SPA 브랜드' : (item.brandType === 'premium' ? '프리미엄' : '일반 브랜드');
+
+                return `
+                    <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md transition p-4 flex flex-col justify-between relative group">
+                        <!-- Top Header -->
+                        <div>
+                            <div class="flex justify-between items-start mb-2">
+                                <span class="bg-slate-100 text-slate-600 text-[10px] font-medium px-2 py-0.5 rounded-md">${item.category} · ${brandLabel}</span>
+                                ${statusBadge}
+                            </div>
+
+                            <h3 class="text-base font-bold text-slate-800 tracking-tight">${escapeHtml(item.name)}</h3>
+                            <p class="text-[11px] text-slate-400 mt-0.5">
+                                <i class="fa-regular fa-calendar mr-1"></i>구매일: ${item.purchaseDate}
+                            </p>
+
+                            <!-- Financial & Wear Stats -->
+                            <div class="grid grid-cols-2 gap-2 my-3 p-3 bg-slate-50/80 rounded-xl border border-slate-100">
+                                <div>
+                                    <span class="text-[10px] text-slate-400 block">구매가 / 1회당 비용</span>
+                                    <span class="text-xs font-semibold text-slate-600">${item.price.toLocaleString()}원</span>
+                                    <div class="text-sm font-extrabold text-eco-800">
+                                        ${cpw.toLocaleString()}원 <span class="text-[10px] text-slate-400 font-normal">/회</span>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <span class="text-[10px] text-slate-400 block">권장 최소 착용 기간</span>
+                                    <div class="text-xs font-bold text-slate-700 mt-0.5">
+                                        ${calculateTargetDuration(item.targetWears)}
+                                    </div>
+                                    <span class="text-[10px] text-slate-400 block mt-0.5">착용 달성도: <strong class="text-eco-700">${item.currentWears}</strong>/${item.targetWears}회</span>
+                                </div>
+                            </div>
+
+                            <!-- Target Date Badge -->
+                            <div class="bg-eco-50/60 p-2 rounded-lg text-[11px] text-eco-900 flex justify-between items-center mb-2 border border-eco-100">
+                                <span><i class="fa-regular fa-calendar-check text-eco-600 mr-1"></i>목표 기간 기한:</span>
+                                <span class="font-bold text-eco-800">${getTargetDateString(item.purchaseDate, item.brandType)}</span>
+                            </div>
+
+                            <!-- Progress Bar -->
+                            <div class="space-y-1 my-2">
+                                <div class="flex justify-between text-[11px] text-slate-500 font-medium">
+                                    <span>목표 달성률</span>
+                                    <span class="font-bold ${progressPercent >= 100 ? 'text-emerald-600' : 'text-slate-700'}">${progressPercent}%</span>
+                                </div>
+                                <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+                                    <div class="bg-gradient-to-r ${isAchieved ? 'from-emerald-500 to-teal-400' : 'from-eco-500 to-emerald-400'} h-2 rounded-full transition-all duration-300" style="width: ${progressPercent}%"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card Actions -->
+                        <div class="pt-3 border-t border-slate-100 flex items-center justify-between mt-2">
+                            <button onclick="logWear('${item.id}')" class="flex-1 bg-eco-600 hover:bg-eco-700 active:scale-[0.98] text-white text-xs font-semibold py-2 px-3 rounded-xl transition flex items-center justify-center space-x-1.5 shadow-sm">
+                                <i class="fa-solid fa-shirt"></i>
+                                <span>오늘 입었어요! (+1)</span>
+                            </button>
+
+                            <div class="flex items-center space-x-1 ml-2">
+                                <button onclick="openEditModal('${item.id}')" class="text-slate-400 hover:text-slate-600 p-2 rounded-lg hover:bg-slate-100 transition" title="수정">
+                                    <i class="fa-solid fa-pen text-xs"></i>
+                                </button>
+                                <button onclick="deleteClothing('${item.id}')" class="text-slate-400 hover:text-rose-600 p-2 rounded-lg hover:bg-rose-50 transition" title="삭제">
+                                    <i class="fa-solid fa-trash-can text-xs"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Action: Log Wear (+1)
+        function logWear(id) {
+            const item = clothingList.find(c => c.id === id);
+            if (item) {
+                item.currentWears += 1;
+                saveToStorage();
+                renderApp();
+            }
+        }
+
+        // Action: Delete Item
+        function deleteClothing(id) {
+            if (confirm('이 의류 기록을 삭제하시겠습니까?')) {
+                clothingList = clothingList.filter(c => c.id !== id);
+                saveToStorage();
+                renderApp();
+            }
+        }
+
+        // Modal Controls
+        function openAddModal() {
+            document.getElementById('modal-title').innerText = '새 옷 등록하기';
+            document.getElementById('clothing-form').reset();
+            document.getElementById('input-id').value = '';
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('input-date').value = today;
+            updateTargetWearsRecommendation();
+            document.getElementById('modal-form').classList.remove('hidden');
+        }
+
+        function openEditModal(id) {
+            const item = clothingList.find(c => c.id === id);
+            if (!item) return;
+
+            document.getElementById('modal-title').innerText = '의류 정보 수정';
+            document.getElementById('input-id').value = item.id;
+            document.getElementById('input-name').value = item.name;
+            document.getElementById('input-category').value = item.category;
+            document.getElementById('input-brand-type').value = item.brandType;
+            document.getElementById('input-date').value = item.purchaseDate;
+            document.getElementById('input-price').value = item.price;
+            document.getElementById('input-target-wears').value = item.targetWears;
+
+            updateTargetWearsRecommendation();
+            document.getElementById('modal-form').classList.remove('hidden');
+        }
+
+        function closeAddModal() {
+            document.getElementById('modal-form').classList.add('hidden');
+        }
+
+        function openProjectModal() {
+            document.getElementById('modal-project').classList.remove('hidden');
+        }
+
+        function closeProjectModal() {
+            document.getElementById('modal-project').classList.add('hidden');
+        }
+
+        // Recommendation Label Updater
+        function updateTargetWearsRecommendation() {
+            const brandType = document.getElementById('input-brand-type').value;
+            const tag = document.getElementById('target-recommendation-tag');
+            
+            if (brandType === 'spa') {
+                tag.innerText = '권장: 30회 (최소 6개월~1년)';
+            } else if (brandType === 'general') {
+                tag.innerText = '권장: 50회 (최소 1년~2년)';
+            } else {
+                tag.innerText = '권장: 80회 이상 (최소 2년 이상)';
+            }
+        }
+
+        // Save (Create or Edit)
+        function saveClothing(e) {
+            e.preventDefault();
+
+            const id = document.getElementById('input-id').value;
+            const name = document.getElementById('input-name').value.trim();
+            const category = document.getElementById('input-category').value;
+            const brandType = document.getElementById('input-brand-type').value;
+            const purchaseDate = document.getElementById('input-date').value;
+            const price = parseInt(document.getElementById('input-price').value, 10) || 0;
+            const targetWears = parseInt(document.getElementById('input-target-wears').value, 10) || 30;
+
+            if (id) {
+                // Update
+                const item = clothingList.find(c => c.id === id);
+                if (item) {
+                    item.name = name;
+                    item.category = category;
+                    item.brandType = brandType;
+                    item.purchaseDate = purchaseDate;
+                    item.price = price;
+                    item.targetWears = targetWears;
+                }
+            } else {
+                // Create
+                const newItem = {
+                    id: Date.now().toString(),
+                    name,
+                    category,
+                    brandType,
+                    purchaseDate,
+                    price,
+                    targetWears,
+                    currentWears: 0
+                };
+                clothingList.unshift(newItem);
+            }
+
+            saveToStorage();
+            closeAddModal();
+            renderApp();
+        }
+
+        // Filter Switcher
+        function setFilter(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                if (btn.dataset.filter === filter) {
+                    btn.className = 'filter-btn bg-slate-800 text-white text-xs font-medium px-3 py-1.5 rounded-xl transition';
+                } else {
+                    btn.className = 'filter-btn bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-medium px-3 py-1.5 rounded-xl transition';
+                }
+            });
+            renderApp();
+        }
+
+        // Utility: HTML Escaping
+        function escapeHtml(str) {
+            return str.replace(/[&<>"']/g, function(m) {
+                return {
+                    '&': '&amp;',
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    '"': '&quot;',
+                    "'": '&#039;'
+                }[m];
+            });
+        }
+    </script>
+</body>
+</html>
